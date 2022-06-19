@@ -2,6 +2,7 @@ package com.cst438.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.cst438.domain.Assignment;
 import com.cst438.domain.AssignmentListDTO;
+import com.cst438.domain.AssignmentListDTO.AssignmentDTO;
 import com.cst438.domain.AssignmentGrade;
 import com.cst438.domain.AssignmentGradeRepository;
 import com.cst438.domain.AssignmentRepository;
@@ -155,6 +157,33 @@ public class GradeBookController {
 		}
 		
 	}
+	
+	/* Add a new assignment for the course. The assignment has a name and a due date. */
+ 	@PutMapping("/assignment/")
+ 	@Transactional
+ 	public void addNewAssignment (@RequestBody AssignmentDTO assignment, @PathVariable("id") Integer assignmentId, @PathVariable("name") String assignmentName, @PathVariable("due_date"), Integer dueDate) {
+ 		AssignmentDTO assignment = new AssignmentDTO();
+ 		assignment.name = assignmentName;
+ 		assignment.due_date = dueDate;
+ 		assignmentRepository.save(assignment);
+ 	}
+
+ 	/* Change the name of the assignment for my course */
+ 	@PutMapping("/assignment/{id}")
+ 	@Transactional
+ 	public void changeAssignmentName(@RequestBody AssignmentDTO assignment, @PathVariable("id") Integer assignmentId, @PathVariable("name") String assignmentName) {
+ 		Assignment assignment = assignmentRepository.findById(assignmentId);
+ 		assignment.name = assignmentName;
+ 		assignmentRepository.save(assignment);
+ 	}
+
+ 	/* Delete an assignment for the course (only if there are no grades for the assignment) */
+ 	@PutMapping("/assignment/{id}")
+ 	@Transactional
+ 	public void deleteAssignment(@RequestBody AssignmentDTO assignment, @PathVariable("id") Integer assignmentId) {
+ 		Assignment assignment = assignmentRepository.findById(assignmentId);
+ 		assignmentRepository.delete(assignment);
+ 	}
 	
 	private Assignment checkAssignment(int assignmentId, String email) {
 		// get assignment 
